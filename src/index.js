@@ -15,9 +15,6 @@ const server = http.createServer(app);
 const io = socketio(server);
 require('./sockets')(io);
 
-
 server.listen(port, () => console.log(`Listening on port ${port}`));
 
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
