@@ -1,0 +1,126 @@
+li{list-style: none;}
+a{text-decoration: none;}
+
+body{
+    background-image: url("../assets/img/bg.jpg");
+}
+
+input[type="text"], textarea{
+    font-size: 1rem;
+    border: none;
+    width: 50%;
+    height: 1.4rem;
+    border-radius: 4px;
+    outline: none;
+    text-align: center;
+}
+
+input[type="text"]::placeholder, textarea::placeholder{
+    font-size: 0.8rem;
+    font-style: italic;
+}
+
+input[type="submit"] {
+    outline: none;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    transition-duration: 0.2s;
+    font-size: 1rem;
+    font-weight: bold;
+    width: 26%;
+}
+input[type="submit"]:hover {
+    border: 0.1px rgba(255, 255, 255, 0.055) outset;
+    box-shadow: none;
+}
+
+textarea{
+    height: 5rem;
+    padding: 2px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    resize: none;
+}
+
+footer  {
+    margin-top: 8rem;
+    font-size: calc(0.8rem + 0.6vw);
+}
+
+.grid-container{
+    display: grid;
+    grid-template-columns: 64%;
+    justify-content: center;
+}
+
+.grid-item{
+    padding: 6px;
+}
+
+.form-grid{
+    margin-top: 6px;
+    display: grid;
+    grid-template-columns: 1fr;
+    row-gap: 0.4rem;
+}
+
+.messages{
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 4px;
+}
+.messages>.card{
+    justify-self: center;
+    width: 80%;
+    border-radius: 4px;
+    background: rgba(121, 110, 112, 0.301);
+}
+.messages>.card>li{font-size: 1.1rem;}
+.messages>.card>p{font-size: 1rem;}
+
+.bg-white{background-color: #cacaca;}
+.bg-black{background-color: #222;}
+
+.bg-gradient{
+    background: #232526;
+    background: -webkit-linear-gradient(to right, #414345, #232526c7);
+    background: linear-gradient(to right, #414345, #232526bb);
+}
+
+.bgimg{
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.bshadow{
+    box-shadow: 4px 4px 6px 0px rgba(0, 0, 0, 0.274);
+}
+
+.txt-title{
+    font-size: 3rem;
+    font-weight: bolder;
+    letter-spacing: 4px;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+.txt-white{color: #cacaca}
+.txt-black{color: #333;}
+
+.txt-center{text-align: center;}
+.txt-bold{font-weight: bold;}
+
+.p2{padding: 2px;}
+.p4{padding: 8px;}
+.p6{padding: 14px;}
+
+.fadein{
+    animation: fadein 0.8s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes fadein {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}

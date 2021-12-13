@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MiniChat</title>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body class="bg-center bgimg">
+    <div class="grid-container">
+
+        <header class="grid-item">
+            <h1 class="txt-center txt-white txt-title">MiniChat</h1>
+        </header>
+
+        <div id="messages" class="grid-item messages"></div>
+        
+        <form id="chat-form" class="form-grid">
+            <div class="txt-center">
+                <input class="txt-white p2 bg-gradient bshadow" type="text" name="username" placeholder="Username" required>
+            </div>
+            <div class="txt-center">
+                <textarea class="txt-white p2 bg-gradient bshadow" type="text" name="message" placeholder="Write a message..." required></textarea>
+            </div>
+            <div class="txt-center p2">
+                <input class="txt-white bg-gradient bshadow p2" type="submit" value="Send">
+            </div>
+        </form>
+
+        <footer class="txt-white txt-center p6">
+            MiniChat • WebDev Jhon Aguiar
+        </footer>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
