@@ -5,7 +5,7 @@ body{
     background-image: url("../assets/img/bg.jpg");
 }
 
-input[type="text"], textarea{
+input[type="text"], .message{
     font-size: 1rem;
     border: none;
     width: 50%;
@@ -15,7 +15,7 @@ input[type="text"], textarea{
     text-align: center;
 }
 
-input[type="text"]::placeholder, textarea::placeholder{
+input[type="text"]::placeholder, .message:empty:not(:focus):before{
     font-size: 0.8rem;
     font-style: italic;
 }
@@ -28,6 +28,7 @@ input[type="submit"] {
     transition-duration: 0.2s;
     font-size: 1rem;
     font-weight: bold;
+    margin-top: 1rem;
     width: 26%;
 }
 input[type="submit"]:hover {
@@ -35,12 +36,18 @@ input[type="submit"]:hover {
     box-shadow: none;
 }
 
-textarea{
+.message{
     height: 5rem;
     padding: 2px;
     overflow-y: auto;
     overflow-x: hidden;
     resize: none;
+    margin: auto;
+}
+.message:empty:not(:focus):before{
+    content:attr(data-text);
+    padding-left: 50%;
+    color: rgba(141, 138, 138, 0.616);
 }
 
 footer  {
@@ -69,6 +76,8 @@ footer  {
     display: grid;
     grid-template-columns: 1fr;
     grid-gap: 4px;
+    overflow-y: auto;
+    max-height: 20rem;
 }
 .messages>.card{
     justify-self: center;
@@ -114,6 +123,9 @@ footer  {
 .p2{padding: 2px;}
 .p4{padding: 8px;}
 .p6{padding: 14px;}
+
+.show{display: grid;}
+.hide{display: none;}
 
 .fadein{
     animation: fadein 0.8s;
