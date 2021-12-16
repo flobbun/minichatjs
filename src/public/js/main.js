@@ -24,7 +24,7 @@ function sendMessage() {
     socket.emit('chat message', data);
     messageField.innerHTML = '';
      //need to fix this
-    document.querySelector('#messages').scrollTop = document.querySelector('#messages').scrollHeight;
+    messages.scrollTop = messages.scrollHeight;
 }
 
 function appendMessage(content) {

@@ -24,8 +24,19 @@ socket.on('login success', (data) => {
     localStorage.setItem('username', data.username);
     loginContainer.classList.replace('show', 'hide');
     chat.classList.replace('hide', 'show');
-    appendMessage(`
-    <li class="txt-center txt-bold">${data.username} has entered the chat</li>`);
+
+    // Reset the history
+    while (messages.firstChild) {
+        messages.removeChild(messages.firstChild);
+    }
+
+    // Append the history
+    data.chat_history.forEach(msg => {
+        appendMessage(`
+        <li class="txt-center txt-bold">${msg.username}</li>
+        <p class="txt-center">${msg.message}</p>`);
+    });
+    appendMessage(`<li class="txt-center txt-bold">${data.username} has entered the chat</li>`);
     // form.querySelectorAll('.message')[0].focus();
 });
 

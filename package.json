@@ -1,17 +1,20 @@
 {
-  "name": "MiniChat",
+  "name": "mini-chat",
   "version": "1.0.0",
-  "description": "",
+  "description": "A mini chat app",
   "main": "index.js",
   "scripts": {
-    "start": "node ./src/index.js",
-    "dev": "nodemon ./src/index.js"
+    "start": "cross-env NODE_ENV=production node ./src/index.js",
+    "dev": "cross-env NODE_ENV=development nodemon ./src/index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cross-env": "^7.0.3",
+    "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "mongoose": "^6.1.2",
     "socket.io": "^4.4.0"
   },
   "devDependencies": {
