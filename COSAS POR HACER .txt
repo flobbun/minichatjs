@@ -1,0 +1,2 @@
+Mejorar el input y hacer que se haga scroll automatico con cada
+mensaje
