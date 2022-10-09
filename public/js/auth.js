@@ -1,45 +1,72 @@
-const loginForm = document.querySelector('#login-form');
-const loginContainer = document.querySelector('#login');
-const chat = document.querySelector('#chat');
+"use strict";
 
-loginForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    login(e);
-});
-loginForm.querySelector('input[name="new-username"]').onkeydown = (e) => {
-    if (e.keyCode === 13 && !e.shiftKey) {
-        e.preventDefault();
-        login();
-    }
-};
+import { Main } from './main.js';
 
-function login(){
-    const data = {
-        username: loginForm.querySelector('input[name="new-username"]').value
+const { socket: SOCKET } = Main;
+
+class Auth {
+
+    loginForm = document.querySelector('#login-form');
+    loginContainer = document.querySelector('#login');
+    chat = document.querySelector('#chat');
+
+    constructor() {
+        this.events();
     }
-    socket.emit('login', data);
+
+    get username() {
+        return this.loginForm.querySelector('input[name="new-username"]').value
+    }
+
+    events() {
+        this.loginForm.addEventListener('submit', (e) => this.onSubmit(e));
+        this.loginForm.querySelector('input[name="new-username"]').onkeydown = (e) => this.onKeyDown(e);
+        SOCKET.on('login success', (data) => this.onLoginSuccess(data));
+        SOCKET.on('login failure', () => this.onLoginFailure());
+    }
+
+    onLoginFailure() {
+        this.loginForm.querySelector('input[name="new-username"]').style.animation = 'error 0.5s ease-in-out';
+    }
+
+    onLoginSuccess(data) {
+        localStorage.setItem('username', data.username);
+        this.loginContainer.classList.replace('show', 'hide');
+        this.chat.classList.replace('hide', 'show');
+
+        // Reset the history
+        while (Main.messages.firstChild) {
+            Main.messages.removeChild(Main.messages.firstChild);
+        }
+
+        // Append the history
+        data.chat_history.forEach(msg => {
+            Main.appendMessage(`
+                <li class="txt-center txt-bold">${msg.username}</li>
+                <p class="txt-center">${msg.message}</p>
+            `);
+        });
+        Main.appendMessage(`<li class="txt-center txt-bold">${data.username} has entered the chat</li>`);
+        // form.querySelectorAll('.message')[0].focus();
+    }
+
+    login() {
+        SOCKET.emit('login', { username: this.username });
+    }
+
+    onSubmit(event) {
+        event.preventDefault();
+        this.login();
+    }
+
+    onKeyDown(event) {
+        if (event.keyCode === 13 && !event.shiftKey) {
+            event.preventDefault();
+            this.login();
+        }
+    }
+
 }
 
-socket.on('login success', (data) => {
-    localStorage.setItem('username', data.username);
-    loginContainer.classList.replace('show', 'hide');
-    chat.classList.replace('hide', 'show');
-
-    // Reset the history
-    while (messages.firstChild) {
-        messages.removeChild(messages.firstChild);
-    }
-
-    // Append the history
-    data.chat_history.forEach(msg => {
-        appendMessage(`
-        <li class="txt-center txt-bold">${msg.username}</li>
-        <p class="txt-center">${msg.message}</p>`);
-    });
-    appendMessage(`<li class="txt-center txt-bold">${data.username} has entered the chat</li>`);
-    // form.querySelectorAll('.message')[0].focus();
-});
-
-socket.on('login failure', () => {
-    loginForm.querySelector('input[name="new-username"]').style.animation = 'error 0.5s ease-in-out';
-});
+const auth = new Auth;
+export { auth as Auth };
