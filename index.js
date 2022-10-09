@@ -1,43 +1,60 @@
-// Libs
-const express = require('express');
-const http = require('http');
-const app = express();
-const path = require('path');
-const socketio = require('socket.io');
-const mongoose = require('mongoose');
-const Message = require('./models/message');
-const config = require('./config');
+import express from 'express';
+import { createServer } from 'http';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { connect } from 'mongoose';
+import config from './config.js';
+import { MessagingService } from './services/messaging.service.js';
+import { LogsService } from './services/logs.service.js';
+import { logger } from './middlewares/logger.middleware.js';
+import { Server as socketIO } from 'socket.io';
+import { Sockets } from './sockets.js';
 
-// Vars
-const max_messages = 10;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-// Environment variables
-console.log('CONFIG: ');
-console.log(config.MONGODB_URI[config.NODE_ENV]);
+class Server {
 
-// Express configuration
-app.use(express.static(path.join(__dirname, 'public')));
+    app = express();
+    server = createServer(this.app);
+    io;
+    socket;
 
-// Server creation
-server = http.createServer(app);
-const io = socketio(server);
-require('./sockets')(io);
+    constructor() {
+        this.config();
+        this.routes();
+        this.start();
+    }
 
-// Database connection
-mongoose.connect(config.MONGODB_URI[config.NODE_ENV]).then(db => {
-    cleanDB();
-    console.log('Connected to MongoDB');
-}).catch(err => console.log(err));
+    config() {
+        this.app.use(express.static(path.join(__dirname, 'public')));
+    }
 
-// Chat history cleanup
-function cleanDB(){
-    Message.countDocuments().then(count => {
-        console.log(`${count} messages/${max_messages} in database`);
-        if(count > max_messages){
-            Message.deleteMany({}).then(() => console.log('History cleaned'));
-        }
-    });
+    routes() {
+        this.app.all('*', logger);
+        this.app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+    }
+
+    start() {
+        this.io = new socketIO(this.server);
+        this.server.listen(config.PORT, this.onServerListening);
+        this.io.on('connection', (socket) => {
+            this.socket = socket;
+            LogsService.log(`New client connected [${socket.id}]`, 'info');
+            new Sockets(socket, this.io);
+        })
+        connect(config.MONGODB_URI[config.NODE_ENV]).then(this.onDatabaseConnected).catch(err => LogsService.log(err, 'error'));
+    }
+
+    onDatabaseConnected() {
+        MessagingService.cleanMessages();
+        LogsService.log('Connected to MongoDB', 'info');
+    }
+
+    onServerListening() {
+        LogsService.log(`Listening on port ${config.PORT}`, 'info')
+    }
 }
-server.listen(config.PORT, () => console.log(`Listening on port ${config.PORT}`));
 
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+const server = new Server();
+export { server as Server };

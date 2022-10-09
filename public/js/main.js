@@ -1,47 +1,61 @@
-const socket = io();
+"use strict";
 
-const form = document.querySelector('#chat-form');
-const messageField = form.querySelectorAll('.message')[0];
-const messages = document.querySelector('#messages');
+import { createElement } from './lib.js';
 
-messageField.onkeydown = (e) => {
-    if (e.keyCode === 13 && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage();
+class Main {
+    socket = io();
+
+    form = document.querySelector('#chat-form');
+    messageField = this.form.querySelectorAll('.message')[0];
+    messages = document.querySelector('#messages');
+
+    constructor() {
+        this.events();
     }
-};
 
-form.addEventListener('submit', (e) => { 
-    e.preventDefault();
-    sendMessage();
-});
-
-function sendMessage() {
-    const data = {
-        username: localStorage.getItem('username'),
-        message: messageField.innerHTML
+    events() {
+        this.messageField.onkeydown = (e) => this.onKeyDown(e);
+        this.form.addEventListener('submit', (e) => this.onSubmit(e));
+        this.socket.on('chat message', (data) => this.onMessage(data));
+        this.socket.on('user count', (amount) => this.onCoun(amount));
     }
-    socket.emit('chat message', data);
-    messageField.innerHTML = '';
-     //need to fix this
-    messages.scrollTop = messages.scrollHeight;
-}
 
-function appendMessage(content) {
-    const card = document.createElement('div');
-    card.className = 'card bshadow txt-white p4 fadein';
-    card.innerHTML = content;
-    messages.appendChild(card);
-}
+    onCount(amount) {
+        document.querySelector('#users-counter').innerHTML = amount;
+    }
 
-socket.on('chat message', (data) => {
-    appendMessage(`
+    onMessage(data) {
+        this.appendMessage(`
         <li class="txt-center txt-bold">${data.username}</li>
         <p class="txt-center">${data.message}</p>`);
-});
+    }
 
-/* User counter */
+    onKeyDown(event) {
+        if (event.keyCode === 13 && !event.shiftKey) {
+            event.preventDefault();
+            this.sendMessage();
+        }
+    }
 
-socket.on('user count', (amount) => {
-    document.querySelector('#users-counter').innerHTML = amount;
-});
+    onSubmit(event) {
+        event.preventDefault();
+        this.sendMessage();
+    }
+
+    sendMessage() {
+        this.socket.emit('chat message', {
+            username: localStorage.getItem('username'),
+            message: this.messageField.value
+        });
+        this.messageField.value = '';
+        // TODO - Fix this
+        this.messages.scrollTop = messages.scrollHeight;
+    }
+
+    appendMessage(content) {
+        this.messages.appendChild(createElement('div', 'card bshadow txt-white p4 fadein', content));
+    }
+}
+
+const main = new Main;
+export { main as Main }

@@ -1,36 +1,33 @@
-// Schemas
-const Message = require('./models/message');
+import { AuthService } from './services/auth.service.js';
+import { LogsService } from './services/logs.service.js';
+import { MessagingService } from './services/messaging.service.js';
 
-module.exports = (io) => {
-    io.on('connection', (socket) => {
-        io.sockets.emit('user count', io.engine.clientsCount);
+export class Sockets {
 
-        socket.on('chat message', async (data) => {
-            const { username, message } = data;
-            await new Message({username, message}).save();
-            io.sockets.emit('chat message', data); //Retransmitiendo el mensaje a todos los clientes
-            console.log(`New message from ${data.username} [${socket.id}]`);
-        });
+    socket;
+    io;
 
-        socket.on('login', async (data) => {
-            socket.username = data.username;
-            io.sockets.emit('login success', {
-                username: data.username,
-                chat_history: await Message.find({}).limit(8)
-            });
-            console.log(`${data.username} [${socket.id}] has logged in`);
-        });
+    constructor(socket, io){
+        this.socket = socket;
+        this.io = io;
+        this.events(socket, io);
+    }
 
-        socket.on('disconnect', () => {
-            io.sockets.emit('user disconnected');
-            io.sockets.emit('user count', io.engine.clientsCount);
-            console.log(`Client disconnected [${socket.id}]`);
-        });
-    
-        socket.on('error', () => {
-            console.log(`Client error [${socket.id}]`);
-        });
+    events(socket, io) {
+        this.socket.on('chat message', (data) => MessagingService.createMessage(data, socket, io));
+        this.socket.on('error', () => this.onError(this.socket));
+        this.socket.on('login', (data) => AuthService.login(data, this.socket, this.io));
+        this.socket.on('disconnect', () => this.onDisconnect(this.socket, this.io));
+    }
 
-        console.log(`New client connected [${socket.id}]`);
-    });
+    onError(socket) {
+        LogsService.log(`Client error [${socket.id}]`, 'info');
+    }
+
+    onDisconnect(socket, io) {
+        socket.emit('user disconnected');
+        socket.emit('user count', io.engine.clientsCount);
+        LogsService.log(`Client disconnected [${socket.id}]`, 'info');
+    }
+
 }
