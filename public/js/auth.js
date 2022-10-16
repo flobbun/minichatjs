@@ -1,5 +1,7 @@
 "use strict";
 
+import { Message } from './elements.js';
+import { hideElement, removeAllChildren, showElement } from './lib.js';
 import { Main } from './main.js';
 
 const { socket: SOCKET } = Main;
@@ -29,25 +31,27 @@ class Auth {
         this.loginForm.querySelector('input[name="new-username"]').style.animation = 'error 0.5s ease-in-out';
     }
 
+    appendHistory(data) {
+        data.chat_history.forEach(msg => {
+            Main.appendMessage(Message(msg));
+        });
+    }
+
     onLoginSuccess(data) {
         localStorage.setItem('username', data.username);
-        this.loginContainer.classList.replace('show', 'hide');
-        this.chat.classList.replace('hide', 'show');
+        hideElement(this.loginContainer);
+        showElement(this.chat);
 
-        // Reset the history
-        while (Main.messages.firstChild) {
-            Main.messages.removeChild(Main.messages.firstChild);
-        }
+        removeAllChildren(Main.messages);
+        this.appendHistory(data);
 
-        // Append the history
-        data.chat_history.forEach(msg => {
-            Main.appendMessage(`
-                <li class="txt-center txt-bold">${msg.username}</li>
-                <p class="txt-center">${msg.message}</p>
-            `);
+        Main.sendMessage({
+            username: data.username,
+            message: `${data.username} has entered the chat`,
+            type: 'System'
         });
-        Main.appendMessage(`<li class="txt-center txt-bold">${data.username} has entered the chat</li>`);
-        // form.querySelectorAll('.message')[0].focus();
+        SOCKET.emit('user count');
+        Main.messageField.focus();
     }
 
     login() {

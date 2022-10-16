@@ -1,6 +1,8 @@
 "use strict";
 
-import { createElement } from './lib.js';
+import { Message, Welcome } from './elements.js';
+import { createElement, removeAllChildren } from './lib.js';
+import { Commands } from './commands.js';
 
 class Main {
     socket = io();
@@ -14,10 +16,30 @@ class Main {
     }
 
     events() {
-        this.messageField.onkeydown = (e) => this.onKeyDown(e);
-        this.form.addEventListener('submit', (e) => this.onSubmit(e));
+        this.messageField.onkeydown = (e) => this.onSubmit(e, 'enter');
+        this.form.addEventListener('submit', (e) => this.onSubmit(e, 'button'));
         this.socket.on('chat message', (data) => this.onMessage(data));
-        this.socket.on('user count', (amount) => this.onCoun(amount));
+        this.socket.on('user count', (amount) => this.onCount(amount));
+        this.socket.on('chat cleaned', () => this.onChatCleaned(this.messages));
+        setInterval(() => this.staffBot(), 60_000);
+    }
+
+    requestPing() {
+        const initialTime = Date.now();
+
+        this.socket.emit("ping", () => {
+            const finalTime = Date.now();
+            Commands.botMsg(`Ping: <b>${finalTime - initialTime}ms</b>`);
+        });
+    }
+
+    staffBot() {
+        Commands.botMsg('Use the command !help to get a list of commands');
+    }
+
+    onChatCleaned(messages) {
+        removeAllChildren(messages);
+        Commands.botMsg('Chat has been cleaned');
     }
 
     onCount(amount) {
@@ -25,31 +47,32 @@ class Main {
     }
 
     onMessage(data) {
-        this.appendMessage(`
-        <li class="txt-center txt-bold">${data.username}</li>
-        <p class="txt-center">${data.message}</p>`);
+        if (data?.type === 'System' && !data?.message) {
+            this.appendMessage(Welcome(data));
+        } else {
+            this.appendMessage(Message(data));
+        }
+        this.messages.scrollTop = messages.scrollHeight - 10;
     }
 
-    onKeyDown(event) {
-        if (event.keyCode === 13 && !event.shiftKey) {
+    onSubmit(event, type = 'button') {
+        if (type === 'button' || (event.keyCode === 13 && !event.shiftKey)) {
             event.preventDefault();
-            this.sendMessage();
+            this.sendMessage({
+                username: localStorage.getItem('username'),
+                message: this.messageField.value
+            });
         }
     }
 
-    onSubmit(event) {
-        event.preventDefault();
-        this.sendMessage();
-    }
-
-    sendMessage() {
-        this.socket.emit('chat message', {
-            username: localStorage.getItem('username'),
-            message: this.messageField.value
-        });
+    sendMessage(options) {
+        const { username, message } = options;
+        if (options?.type !== 'System' && message.startsWith('!')) {
+            Commands.interpret(message);
+        } else {
+            this.socket.emit('chat message', { username, message, type: options?.type || 'User', noSave: options.noSave });
+        }
         this.messageField.value = '';
-        // TODO - Fix this
-        this.messages.scrollTop = messages.scrollHeight;
     }
 
     appendMessage(content) {

@@ -2,7 +2,10 @@ import mongoose from "mongoose";
 const { Schema } = mongoose;
 
 const MessageSchema = new Schema({
-    username: String,
+    username: {
+        type: String,
+        default: "System"
+    },
     message: String,
     date: {
         type: Date,

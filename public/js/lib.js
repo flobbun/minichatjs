@@ -5,3 +5,12 @@ export const createElement = (tag, className, innerHTML) => {
 
     return element;
 };
+
+export const removeAllChildren = (element) => {
+    while (element.firstChild) {
+        element.removeChild(element.firstChild);
+    }
+}
+
+export const showElement = (element) => { element.classList.replace('hidden', 'show') };
+export const hideElement = (element) => { element.classList.replace('show', 'hidden') };
