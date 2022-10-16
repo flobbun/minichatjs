@@ -8,8 +8,6 @@ body{
 input[type="text"], .message{
     font-size: 1rem;
     border: none;
-    width: 50%;
-    height: 1.4rem;
     border-radius: 4px;
     outline: none;
     text-align: center;
@@ -29,7 +27,6 @@ input[type="submit"] {
     font-size: 1rem;
     font-weight: bold;
     margin-top: 1rem;
-    width: 26%;
 }
 input[type="submit"]:hover {
     border: 0.1px rgba(255, 255, 255, 0.055) outset;
@@ -53,12 +50,6 @@ input[type="submit"]:hover {
 footer  {
     margin-top: 8rem;
     font-size: calc(0.8rem + 0.6vw);
-}
-
-.grid-container{
-    display: grid;
-    grid-template-columns: 64%;
-    justify-content: center;
 }
 
 .grid-item{
@@ -88,9 +79,6 @@ footer  {
 .messages>.card>li{font-size: 1.1rem;}
 .messages>.card>p{font-size: 1rem;}
 
-.bg-white{background-color: #cacaca;}
-.bg-black{background-color: #222;}
-
 .bg-gradient{
     background: #232526;
     background: -webkit-linear-gradient(to right, #414345, #232526c7);
@@ -103,26 +91,12 @@ footer  {
     background-repeat: no-repeat;
 }
 
-.bshadow{
-    box-shadow: 4px 4px 6px 0px rgba(0, 0, 0, 0.274);
-}
-
 .txt-title{
     font-size: 3rem;
     font-weight: bolder;
     letter-spacing: 4px;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
-
-.txt-white{color: #cacaca}
-.txt-black{color: #333;}
-
-.txt-center{text-align: center;}
-.txt-bold{font-weight: bold;}
-
-.p2{padding: 2px;}
-.p4{padding: 8px;}
-.p6{padding: 14px;}
 
 .show{display: grid;}
 .hide{display: none;}

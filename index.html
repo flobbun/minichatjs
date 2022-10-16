@@ -15,52 +15,55 @@
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <!-- CSS -->
     <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/style.css">
     <title>MiniChat</title>
 </head>
 <body class="bg-center bgimg fadein">
 
-    <div class="users-counter txt-white txt-bold">
-        Users: <span id="users-counter">0</span>
-    </div>
-
-    <div class="grid-container">
-
-        <!-- HEADER -->
-        <header class="grid-item">
-            <h1 class="txt-center txt-white txt-title">MiniChat</h1>
-        </header>
-
-        <div id="login" class="show">
-            <form id="login-form">
-                <div class="txt-center">
-                    <input class="txt-white p2 bg-gradient bshadow" type="text" name="new-username" placeholder="Username" required>
-                </div>
-                <div class="txt-center p2">
-                    <input class="txt-white bg-gradient bshadow p2" type="submit" value="Join the chat">
-                </div>
-            </form>
+    <main class="p-8">
+        <div class="users-counter text-white font-bold">
+            Users: <span id="users-counter">0</span>
         </div>
 
-        <div id="chat" class="hide">
-            <!-- MESSAGES -->
-            <div id="messages" class="grid-item messages"></div>
+        <div class="flex flex-col justify-center align-middle space-y-64">
 
-            <!-- CHAT FORM -->
-            <form id="chat-form" class="form-grid">
-                <div class="txt-center p2">
-                    <textarea autocomplete="off" required class="message txt-white p2 bg-gradient bshadow" placeholder="Write a message..."></textarea>
-                </div>
-                <div class="txt-center p2">
-                    <input class="txt-white bg-gradient bshadow p2" type="submit" value="Send">
-                </div>
-            </form>
+            <!-- HEADER -->
+            <header class="text-center">
+                <h1 class="text-center text-white txt-title">MiniChat</h1>
+            </header>
+
+            <div id="login" class="show">
+                <form id="login-form">
+                    <div class="text-center">
+                        <input class="text-white p-4 bg-gradient shadow-xl w-2/6 h-8 min-w-min" type="text" name="new-username" placeholder="Username" required>
+                    </div>
+                    <div class="text-center p-2">
+                        <input class="text-white bg-gradient shadow-2xl shadow-black w-2/12 h-8 min-w-min" type="submit" value="Join the chat">
+                    </div>
+                </form>
+            </div>
+
+            <div id="chat" class="p-4 space-y-6 hidden">
+                <!-- MESSAGES -->
+                <div class="messages p-4" id="messages"></div>
+
+                <!-- CHAT FORM -->
+                <form id="chat-form" class="flex flex-col justify-center">
+                    <div class="text-center p2">
+                        <textarea autocomplete="off" required class="message text-white p2 bg-gradient shadow-2xl p-3 w-2/4" placeholder="Write a message..."></textarea>
+                    </div>
+                    <div class="text-center p2">
+                        <input class="text-white bg-gradient-to-t bg-gradient shadow-2xl p-4" type="submit" value="Send">
+                    </div>
+                </form>
+            </div>
+
+            <!-- FOOTER -->
+            <footer class="text-white text-center p6">
+                MiniChat • WebDev Jhon Aguiar
+            </footer>
         </div>
-
-        <!-- FOOTER -->
-        <footer class="txt-white txt-center p6">
-            MiniChat • WebDev Jhon Aguiar
-        </footer>
-    </div>
+    </main>
 
     <script src="/socket.io/socket.io.js"></script>
     <script type="module" src="js/main.js"></script>
